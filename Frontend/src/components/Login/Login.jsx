@@ -5,7 +5,6 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
@@ -14,6 +13,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import image from "../Images/image.jpg";
 import authService from "../../service/authService";
+import { NavLink } from "react-router-dom";
 
 function Copyright() {
   return (
@@ -66,43 +66,52 @@ const useStyles = makeStyles((theme) => ({
 export default function SignInSide(props) {
   const classes = useStyles();
 
-  if(authService.isLoggedIn()){
+  if (authService.isLoggedIn()) {
 
     props.history.push("./home");
 
   }
 
 
-  const [email,setEmail] = React.useState("");
-  const [password,setPassword] = React.useState("");
-  const handelLogin = (event)=>{
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const handelLogin = (event) => {
     const config = {
       email: email,
       password: password,
     }
     event.preventDefault();
 
-    if (email && password) 
-    {
-      fetch('http://localhost:7900/login', {
+    if (email && password) {
+      fetch('http://localhost:8000/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(config)
       })
-      .then((response) => {
-        if(response.status === 201){
-          authService.doLogIn(email);
-          props.history.push("/home"); 
-        }
-        if(response.status === 404){
-          props.history.push("/login");
-        }
-        return response.json()
-      })
+        .then((response) => {
+          if (response.status === 201) {
+            authService.doLogIn(email);
+            fetch('http://localhost:8000/otp', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(config)
+            })
+            props.history.push("/home"); 
+          }
+          if (response.status === 404) {
+            props.history.push("/login");
+          }
+          if (response.status === 211) {
+            console.log(response);
+          }
+          return response.json()
+        })
         .catch((error) => console.error(error));
-    }    
+    }
   };
 
   return (
@@ -125,10 +134,10 @@ export default function SignInSide(props) {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} onSubmit = {handelLogin}>
+          <form className={classes.form} onSubmit={handelLogin}>
             <TextField
-            value={email}
-            onChange={(e) => { setEmail(e.target.value) }}
+              value={email}
+              onChange={(e) => { setEmail(e.target.value) }}
               variant="outlined"
               margin="normal"
               required
@@ -139,8 +148,8 @@ export default function SignInSide(props) {
               autoFocus
             />
             <TextField
-            value={password}
-            onChange={(e) => { setPassword(e.target.value) }}
+              value={password}
+              onChange={(e) => { setPassword(e.target.value) }}
               variant="outlined"
               margin="normal"
               required
@@ -161,15 +170,15 @@ export default function SignInSide(props) {
               variant="contained"
               color="primary"
               className={classes.submit}
-              
+
             >
               Sign In
             </Button>
             <Grid container>
               <Grid item>
-                <Link href="/Signup" variant="body2">
+                <NavLink to="/Signup" variant="body2">
                   {"Don't have an account? Sign Up"}
-                </Link>
+                </NavLink>
               </Grid>
             </Grid>
             <Box mt={5}>

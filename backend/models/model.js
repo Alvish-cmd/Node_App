@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const schema = new mongoose.Schema({
     firstName:{
@@ -24,6 +25,8 @@ const schema = new mongoose.Schema({
         type: String,
     }
 })
+
+
 
 const Userdb = mongoose.model('users',schema)
 

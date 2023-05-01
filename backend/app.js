@@ -25,7 +25,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use('/css',express.static(path.resolve(__dirname,"assets/css")))
 app.use('/', indexRouter);
 
 mongoose.connect(MONGODB_URI)

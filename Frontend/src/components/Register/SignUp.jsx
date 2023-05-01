@@ -3,7 +3,6 @@ import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
-import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
@@ -15,6 +14,7 @@ import "primereact/resources/primereact.min.css";
 import { Calendar } from 'primereact/calendar';
 import { ToastContainer, toast, Flip } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { NavLink } from "react-router-dom";
 
 
 
@@ -67,7 +67,7 @@ export default function SignUp(props) {
     }
     
     if (firstname && lastName && email && password && dob && image) {
-      fetch('http://localhost:7900/signup', {
+      fetch('http://localhost:8000/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -199,9 +199,9 @@ export default function SignUp(props) {
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="/login" variant="body2">
-                Already have an account? Sign in
-              </Link>
+            <NavLink to="/Login" variant="body2">
+                  {"Don't have an account? Sign Up"}
+                </NavLink>
             </Grid>
           </Grid>
           <ToastContainer />
