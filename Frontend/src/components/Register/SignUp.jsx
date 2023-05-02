@@ -12,8 +12,8 @@ import Container from "@material-ui/core/Container";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css"; 
 import { Calendar } from 'primereact/calendar';
-import { ToastContainer, toast, Flip } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+// import { ToastContainer, toast, Flip } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
 import { NavLink } from "react-router-dom";
 
 
@@ -76,33 +76,33 @@ export default function SignUp(props) {
       })
         .then((response) => {
           if(response.status === 211){
-            toast.error("You are exiting User", {
-              transition: Flip,
-              position: "top-center",
-              autoClose: 2000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
+            // toast.error("You are exiting User", {
+            //   transition: Flip,
+            //   position: "top-center",
+            //   autoClose: 2000,
+            //   hideProgressBar: false,
+            //   closeOnClick: true,
+            //   pauseOnHover: true,
+            //   draggable: true,
+            //   progress: undefined,
       
-              theme: "dark",
-            }); 
+            //   theme: "dark",
+            // }); 
             props.history.push("/signup");
           }
           if(response.status === 201){
-            toast.success("Register Successfull", {
-              transition: Flip,
-              position: "top-center",
-              autoClose: 2000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
+            // toast.success("Register Successfull", {
+            //   transition: Flip,
+            //   position: "top-center",
+            //   autoClose: 2000,
+            //   hideProgressBar: false,
+            //   closeOnClick: true,
+            //   pauseOnHover: true,
+            //   draggable: true,
+            //   progress: undefined,
       
-              theme: "dark",
-            }); 
+            //   theme: "dark",
+            // }); 
             props.history.push("/login");
              
           }
@@ -204,7 +204,7 @@ export default function SignUp(props) {
                 </NavLink>
             </Grid>
           </Grid>
-          <ToastContainer />
+          {/* <ToastContainer /> */}
         </form>
       </div>
       <Box mt={5}>

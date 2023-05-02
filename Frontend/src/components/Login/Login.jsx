@@ -75,43 +75,38 @@ export default function SignInSide(props) {
 
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const handelLogin = (event) => {
-    const config = {
-      email: email,
-      password: password,
-    }
-    event.preventDefault();
+  const handelLogin = async (event) => {
+    try {
 
-    if (email && password) {
-      fetch('http://localhost:8000/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(config)
-      })
-        .then((response) => {
-          if (response.status === 201) {
-            authService.doLogIn(email);
-            fetch('http://localhost:8000/otp', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(config)
-            })
-            props.history.push("/home"); 
-          }
-          if (response.status === 404) {
-            props.history.push("/login");
-          }
-          if (response.status === 211) {
-            console.log(response);
-          }
-          return response.json()
-        })
-        .catch((error) => console.error(error));
+      const config = {
+        email: email,
+        password: password,
+      }
+      event.preventDefault();
+
+      if (email && password) {
+        const response = await fetch('http://localhost:8000/login',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(config)
+          });
+          console.log(response);
+        if (response.status === 200) {
+          props.history.push("/Otp");
+        }
+        if (response.status === 404) {
+          props.history.push("/login");
+        }
+        if (response.status === 211) {
+          console.log(response);
+        }
+        return response.json()
+      }
     }
+    catch (error) { console.log(error) };
   };
 
   return (

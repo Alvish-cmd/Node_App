@@ -2,6 +2,7 @@ const express = require('express');
 const { check } = require('express-validator');
 const indexController = require('../controllers/index.controller');
 const multer = require('multer');
+const auth = require('../middlewere/isauth')
 const Userdb = require('../models/model');
 
 const router = express.Router();
@@ -23,7 +24,7 @@ const upload = multer({ storage: storage }).fields([{ name: 'document', maxCount
 
 /* GET home page. */
 
-router.post('/signup', upload,
+router.post('/signup',upload,
     check('firstName', 'First Name should not be empty')
         .notEmpty(),
     check('lastName', 'Last Name should not be empty')
@@ -58,7 +59,7 @@ router.post("/login", check('email', 'Please enter a valid email')
         .isAlphanumeric()
         .notEmpty(), indexController.login)
 
-router.get("/getuser",indexController.getUser)
+router.get("/getuser",auth,indexController.getUser)
 
-router.post("/otp",indexController.otp)
+router.post("/otp",auth,indexController.postOtp)
 module.exports = router;
