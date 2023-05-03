@@ -62,4 +62,8 @@ router.post("/login", check('email', 'Please enter a valid email')
 router.get("/getuser",auth,indexController.getUser)
 
 router.post("/otp",auth,indexController.postOtp)
+
+router.post("/sendpasswordlink",indexController.sendlink)
+
+// router.post("/forgetpassword",indexController.resetpassword)
 module.exports = router;

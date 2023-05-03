@@ -8,7 +8,7 @@ const otpSchema = new Schema({
         ref: 'users',
         required: true
     },
-    otp: {
+    otp: {  
         type: String,
         required: true
     },

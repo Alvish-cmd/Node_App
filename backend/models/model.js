@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const { verify } = require('jsonwebtoken');
 
 const schema = new mongoose.Schema({
     firstName:{
@@ -23,6 +24,9 @@ const schema = new mongoose.Schema({
     },
     image:{
         type: String,
+    },
+    verifytoken:{
+        type:String,
     }
 })
 

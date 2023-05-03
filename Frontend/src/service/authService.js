@@ -11,6 +11,7 @@ const isLoggedIn = () => {
 const logOut = (props) =>{
   localStorage.removeItem("isLoggedIn");
   localStorage.removeItem("User");
+  localStorage.removeItem("login");
   props.history.push("/login");
 
 };

@@ -67,7 +67,7 @@ export default function SignInSide(props) {
   const classes = useStyles();
 
   if (authService.isLoggedIn()) {
-
+    localStorage.setItem("login",true);
     props.history.push("./home");
 
   }
@@ -88,22 +88,27 @@ export default function SignInSide(props) {
         const response = await fetch('http://localhost:8000/login',
           {
             method: 'POST',
+            credentials: 'include',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              Accept:'application/json',
+              "Allow-Control-Cross-Origin":'*'
+
             },
-            body: JSON.stringify(config)
+            body: JSON.stringify(config),
           });
-          console.log(response);
-        if (response.status === 200) {
-          props.history.push("/Otp");
+          const Response = await response.json()
+        if (Response.success === true) {
+          const token = localStorage.setItem('token',Response.data.token)
+          props.history.push("/otp");
         }
-        if (response.status === 404) {
+        if (Response.success === false) {
           props.history.push("/login");
         }
         if (response.status === 211) {
           console.log(response);
         }
-        return response.json()
+        
       }
     }
     catch (error) { console.log(error) };
@@ -173,6 +178,13 @@ export default function SignInSide(props) {
               <Grid item>
                 <NavLink to="/Signup" variant="body2">
                   {"Don't have an account? Sign Up"}
+                </NavLink>
+              </Grid>
+            </Grid>
+            <Grid container>
+              <Grid item>
+                <NavLink to="/password-reset" variant="body2">
+                  {"Forget Password"}
                 </NavLink>
               </Grid>
             </Grid>
