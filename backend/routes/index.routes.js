@@ -24,7 +24,7 @@ const upload = multer({ storage: storage }).fields([{ name: 'document', maxCount
 
 /* GET home page. */
 
-router.post('/signup',upload,
+router.post('/signup', upload,
     check('firstName', 'First Name should not be empty')
         .notEmpty(),
     check('lastName', 'Last Name should not be empty')
@@ -59,11 +59,20 @@ router.post("/login", check('email', 'Please enter a valid email')
         .isAlphanumeric()
         .notEmpty(), indexController.login)
 
-router.get("/getuser",auth,indexController.getUser)
 
-router.post("/otp",auth,indexController.postOtp)
+router.post("/otp", auth, indexController.postOtp)
 
-router.post("/sendpasswordlink",indexController.sendlink)
+router.post("/sendpasswordlink", indexController.sendlink)
 
-// router.post("/forgetpassword",indexController.resetpassword)
+router.post("/forgetpassword/:id/:token", indexController.resetpassword)
+
+
+// Service Routes
+router.get("/getServiceList", indexController.getServiceList)
+router.get("/getuser", indexController.getService)
+
+router.post("/addService",indexController.addService);
+
+router.get("/getservice",indexController.getedit);
+
 module.exports = router;

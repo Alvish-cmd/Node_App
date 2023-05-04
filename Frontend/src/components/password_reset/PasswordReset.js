@@ -10,6 +10,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import image from "../Images/image.jpg";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,12 +51,19 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2)
+  },
+  login: {
+    margin: theme.spacing(0, 0, 0),
+    width:150,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center"
   }
 }));
 
  const PasswordReset = () => {
   
-
+  const history = useHistory();
   const classes = useStyles();
 
   const [email,setEmail] = useState("")
@@ -94,6 +102,10 @@ const useStyles = makeStyles((theme) => ({
     }
     catch (error) { console.log(error) };
 
+  }
+
+  const handleLogin = () =>{
+    history.push('/login')
   }
   return (
     <Grid container component="main" className={classes.root}>
@@ -141,6 +153,16 @@ const useStyles = makeStyles((theme) => ({
             <Box mt={5}>
             </Box>
           </form>
+          <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.login}
+              onClick={handleLogin}
+            >
+              Back To Login
+            </Button>
         </div>
       </Grid>
     </Grid>

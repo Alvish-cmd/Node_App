@@ -67,8 +67,7 @@ export default function SignInSide(props) {
   const classes = useStyles();
 
   if (authService.isLoggedIn()) {
-    localStorage.setItem("login",true);
-    props.history.push("./home");
+    props.history.push("./otp");
 
   }
 
@@ -170,7 +169,6 @@ export default function SignInSide(props) {
               variant="contained"
               color="primary"
               className={classes.submit}
-
             >
               Sign In
             </Button>

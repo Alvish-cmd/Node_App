@@ -1,10 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
@@ -12,8 +10,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import image from "../Images/image.jpg";
-import authService from "../../service/authService";
-import { NavLink } from "react-router-dom";
+import { useParams,useHistory } from "react-router-dom";
 const useStyles = makeStyles((theme) => ({
   root: {
     height: "100vh",
@@ -53,12 +50,57 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2)
+  },
+  login: {
+    margin: theme.spacing(0, 0, 0),
+    width:150,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center"
   }
 }));
 
 
-const ForgetPassword = () => {
+const ForgetPassword = () => 
+{
+  const history = useHistory()
   const classes = useStyles();
+
+  const { id, token } = useParams();
+
+  const [password, setPassword] = useState("");
+
+  const sendpassword = async (e) => {
+    e.preventDefault();
+
+    if (password === "") {
+
+
+    } else if (password.length < 6) {
+
+    } else {
+      
+      const res = await fetch(`http://localhost:8000/forgetpassword/${id}/${token}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ password })
+      });
+
+      const data = await res.json()
+      if (data.status === 200) {
+        alert("your password set")
+        setPassword("")
+      } else {
+      }
+    }
+  }
+
+  const handleLogin = () =>{
+    history.push('/login')
+  }
+
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -80,9 +122,10 @@ const ForgetPassword = () => {
           <Typography component="h1" variant="h5">
             Reset password
           </Typography>
-          <form className={classes.form} >
+          <form className={classes.form} onSubmit={sendpassword} >
             <TextField
-              
+              value={password}
+              onChange={(e) => { setPassword(e.target.value) }}
               variant="outlined"
               margin="normal"
               required
@@ -92,19 +135,6 @@ const ForgetPassword = () => {
               name="password"
               autoFocus
             />
-            <TextField
-              
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-           
             <Button
               type="submit"
               fullWidth
@@ -118,6 +148,17 @@ const ForgetPassword = () => {
             <Box mt={5}>
             </Box>
           </form>
+            <Button
+              type="submit"
+              onClick={handleLogin}
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.login}
+
+            >
+              login
+            </Button>
         </div>
       </Grid>
     </Grid>

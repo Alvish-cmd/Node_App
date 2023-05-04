@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
+import { Link } from 'react-router-dom'
 import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -14,6 +16,7 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
+import "./Home.css"
 import authService from "../../service/authService";
 
 
@@ -93,14 +96,60 @@ const useStyles = makeStyles((theme) => ({
   },
   icon: {
     color: "rgba(255, 255, 255, 0.54)"
-  }
+  }, submit: {
+    margin: theme.spacing(3, 0, 2),
+    width: 150,
+    textDecoration: 'none'
+  },
 }));
 
 export default function Home(props) {
   if (!authService.isLoggedIn()) {
     props.history.push("/login");
-  }
 
+  }
+  const [data, setData] = useState([])
+
+  const fetchdata = async () => {
+    const response = await fetch('http://localhost:8000/getServiceList',
+      {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          "Allow-Control-Cross-Origin": '*'
+
+        },
+      });
+    const Response = await response.json()
+    
+    setData(Response)
+  }
+  useEffect(() => {
+    fetchdata()
+  }, []);
+
+  const getUserData = async(id) => {
+  
+  
+    const response = await fetch(`http://localhost:8000/getservice?id=${id}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          "Allow-Control-Cross-Origin": '*'
+
+        },
+      });
+    const Response = await response.json()
+    localStorage.setItem('user',JSON.stringify(Response))
+    
+      props.history.push('/EditService')
+    
+  }
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -185,7 +234,7 @@ export default function Home(props) {
 
   return (
     <>
-    
+
       <div className={classes.grow}>
         <AppBar position="static">
           <Toolbar>
@@ -198,7 +247,7 @@ export default function Home(props) {
               <MenuIcon />
             </IconButton>
             <Typography className={classes.title} variant="h6" noWrap>
-              Material-UI
+              Service Mangment System
             </Typography>
             <div className={classes.search}>
               <div className={classes.searchIcon}>
@@ -242,7 +291,7 @@ export default function Home(props) {
             <div className={classes.sectionMobile}>
               <IconButton
                 aria-label="show more"
-                aria-controls={mobileMenuId}
+                aria-controls={mobileMenuId}getservice
                 aria-haspopup="true"
                 onClick={handleMobileMenuOpen}
                 color="inherit"
@@ -255,6 +304,45 @@ export default function Home(props) {
         {renderMobileMenu}
         {renderMenu}
       </div>
+      <Link to="/add-service">
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+
+          className={classes.submit}
+        >
+          Add Service
+        </Button>
+      </Link>
+
+
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Service</th>
+          <th>Price</th>
+          <th>Actions</th>
+        </tr>
+        {data.map(i => {
+          return (
+            <tr>
+              <td>{i.userId.firstName}</td>
+              <td>{i.service}</td>
+              <td>{i.service_price}</td>
+              <td><Button onClick={()=>{getUserData(i._id)}}>Edit</Button></td>
+              {/* <a href={"/updateservice/"+i._id} class="btn border-shadow update">
+                <span class="text-gradient">Edit</span>
+              </a> */}
+              <a href={"/update-service?id="+i._id} class="btn border-shadow update">
+                <span class="text-gradient">Edit</span>
+              </a>
+            </tr>
+          )
+        })}
+      </table>
+
     </>
   );
 }

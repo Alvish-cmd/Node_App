@@ -25,6 +25,9 @@ const schema = new mongoose.Schema({
     image:{
         type: String,
     },
+    isadmin:{
+        type:Boolean,
+    },
     verifytoken:{
         type:String,
     }

@@ -1,0 +1,17 @@
+
+table, th, td {
+    border:1px solid black;
+  }
+
+table{
+    width: 100%;
+}
+button{
+    /* margin: 15px; */
+    position: relative;
+    left: 15px;
+}
+
+a{
+    margin: 0 0 0 25px;
+}

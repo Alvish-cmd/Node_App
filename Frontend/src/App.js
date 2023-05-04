@@ -4,6 +4,8 @@ import Login from "./components/Login/Login.jsx";
 import SignUp from "./components/Register/SignUp";
 import  ForgetPassword  from "./components/password_reset/ForgetPassword";
 import  PasswordReset  from "./components/password_reset/PasswordReset";
+import addService from "./components/Crud/addService";
+import editservice from "./components/Crud/EditService";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Home from "./components/Dashboard/Home";
 import Otp from './components/userOtp/Otp'
@@ -17,7 +19,9 @@ export default function App() {
       <Route path="/login" component={Login} />
       <Route path="/Signup" component={SignUp} />
       <Route path="/password-reset" component={PasswordReset} />
-      <Route path="/forgetpassword" component={ForgetPassword} />
+      <Route path="/forgetpassword/:id/:token" component={ForgetPassword} />
+      <Route path="/add-service" component={addService} />
+      <Route path="/EditService" component={editservice} />
       <Route
         path="/home"
         render={(props) => <Home display={true} {...props} />}

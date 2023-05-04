@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const OTP = require('../models/otp')
 
 const Userdb = require('../models/model')
+const Servicedb = require('../models/Service')
 
 // For Mail sent main section
 
@@ -15,8 +16,8 @@ const transporter = nodemailer.createTransport({
   secure: false,
   requireTLS: true,
   auth: {
-    user: "alvishpatel786@gmail.com",
-    pass: "hyfdrwgqdjgnupry"
+    user: "alvishtest6654@gmail.com",
+    pass: "fwijvdmicdjdigda"
     // pass: "sjpypyxxbgeksnvu",
   },
 });
@@ -38,6 +39,7 @@ exports.signup = async (req, res) => {
     if (!errors.isEmpty()) {
       const alert = errors.array()[0].msg;
       res.status(211).json({
+        status: 211,
         "success": false,
         "message": "somthing went wrong",
         "data": { "alert": alert }
@@ -51,10 +53,12 @@ exports.signup = async (req, res) => {
         email: req.body.email,
         password: req.body.password,
         dob: req.body.dob,
-        image: req.body.image
+        image: req.body.image,
+        isadmin:false
       })
       await user.save()
       res.status(201).json({
+        status: 201,
         "success": true,
         "message": "register success",
         "data": {}
@@ -76,9 +80,9 @@ exports.postOtp = async (req, res, next) => {
     if (otps.otp == otp) {
 
       const result = await OTP.findOneAndDelete({ userId });
-      res.status(200).json("sucessfully otp verify")
+      res.status(200).json({message:"sucessfully otp verify",status:200})
     } else {
-      res.status(404).json("otp invalid");
+      res.status(404).json({status:404,message : "otp invalid"});
     }
   }
 };
@@ -91,6 +95,7 @@ exports.login = async (req, res) => {
     if (!errors.isEmpty()) {
       const alert = errors.array()[0].msg;
       const error = res.status(211).json({
+        status:211,
         "success": false,
         "message": "somthing went wrong",
         "data": { "alert": alert },
@@ -147,6 +152,7 @@ exports.login = async (req, res) => {
         });
         await otpModel.save();
         return res.status(200).json({
+          status:200,
           "success": true,
           "message": "Otp sent Sucessfully",
           "data": { "token": token }
@@ -154,6 +160,7 @@ exports.login = async (req, res) => {
       }
       else {
         res.status(211).json({
+          status:211,
           "success": false,
           "message": "password not match",
           "data": {}
@@ -175,18 +182,14 @@ exports.sendlink = async (req, res) => {
   }
   try {
     const user = await Userdb.findOne({ email: email })
-    if (user) {
       const token = jwt.sign(
         { _id: user._id },
         'this is secret key',
-        { expiresIn: "300s" }
+        { expiresIn: "1d" }
       );
       const setusertoken = await Userdb.findByIdAndUpdate({ _id: user._id }, { verifytoken: token }, { new: true })
-      console.log("🚀 ~ file: index.controller.js:180 ~ exports.sendlink=async ~ setusertoken:", setusertoken)
-    }
     if (setusertoken) 
     {
-
       const message = 
       {
         from: "dtest6654@gmail.com",
@@ -211,3 +214,73 @@ exports.sendlink = async (req, res) => {
   }
   
 }
+
+
+exports.resetpassword = async(req,res)=>{
+  const {id,token} = req.params;
+    const {password} = req.body;
+    console.log("🚀 ~ file: index.controller.js:220 ~ exports.resetpassword=async ~ password:", password)
+    try {
+        const updatedpassword = await Userdb.findByIdAndUpdate(
+         { _id:id,verifytoken:token},
+         { $set : { password : password}}
+        );
+        res.status(200).json({status:200,message:"password change successfully."})
+    } catch (error) {
+        res.status(401).json({status:401,error})
+    }
+}
+
+
+exports.addService = async(req,res)=>{
+  try {
+    const service = new Servicedb({
+      userId:req.body.name,
+      service:req.body.service,
+      service_price:req.body.service_price,
+      modelId:req.body.Customer_name
+    })
+    await service.save()
+        res.status(200).json({status:200,message:"Service add successfully"})
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+exports.getService = async(req,res)=>
+{
+  try {
+    const data = await Userdb.find()
+    res.status(200).send(data)
+  
+  }catch(error){
+
+  }
+}
+
+exports.getServiceList = async(req,res)=>
+{
+  try {
+    const data = await Servicedb.find().populate('userId')
+    console.log("🚀 ~ file: index.controller.js:266 ~ data:", data)
+    res.status(200).send(data)
+  
+  }catch(error){
+
+  }
+}
+
+exports.getedit = async(req,res)=>{
+  const id = req.query.id;
+  console.log("🚀 ~ file: index.controller.js:265 ~ exports.getedit=async ~ id:", id)
+  try {
+    const data = await Servicedb.findById(id).populate('userId')
+    console.log("🚀 ~ file: index.controller.js:269 ~ exports.getedit=async ~ data:", data) 
+    res.status(200).json({'data':data})
+} catch (error) {
+    res.status(401).json({status:401,error})
+}
+
+}
+
