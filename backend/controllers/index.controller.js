@@ -54,7 +54,7 @@ exports.signup = async (req, res) => {
         password: req.body.password,
         dob: req.body.dob,
         image: req.body.image,
-        isadmin:false
+        isadmin: false
       })
       await user.save()
       res.status(201).json({
@@ -80,9 +80,9 @@ exports.postOtp = async (req, res, next) => {
     if (otps.otp == otp) {
 
       const result = await OTP.findOneAndDelete({ userId });
-      res.status(200).json({message:"sucessfully otp verify",status:200})
+      res.status(200).json({ message: "sucessfully otp verify", status: 200 })
     } else {
-      res.status(404).json({status:404,message : "otp invalid"});
+      res.status(404).json({ status: 404, message: "otp invalid" });
     }
   }
 };
@@ -95,7 +95,7 @@ exports.login = async (req, res) => {
     if (!errors.isEmpty()) {
       const alert = errors.array()[0].msg;
       const error = res.status(211).json({
-        status:211,
+        status: 211,
         "success": false,
         "message": "somthing went wrong",
         "data": { "alert": alert },
@@ -104,22 +104,26 @@ exports.login = async (req, res) => {
     else {
       const userData = await Userdb.findOne({
         email: req.body.email.toLowerCase(),
-        password: req.body.password
+        password: req.body.password,
       })
-      if (userData) {
+      console.log("🚀 ~ file: index.controller.js:110 ~ exports.login= ~ userData:", userData)
+      if (userData) 
+      {
         const token = jwt.sign(
           { userId: userData._id },
           'this is secret key',
           { expiresIn: "4h" }
         );
+        res.cookie("id",userData._id.toString())
         res.setHeader("token", token, { httpOnly: false });
-        let generateOtp = Math.floor(100000 + Math.random() * 900000);
-        const message = {
+        if(userData.isadmin === true){
+          let generateOtp = Math.floor(100000 + Math.random() * 900000);
+          const message = {
           from: "dtest6654@gmail.com",
           to: req.body.email,
           subject: "OTP",
           html: `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
-      <div style="margin:50px auto;width:70%;padding:20px 0">
+        <div style="margin:50px auto;width:70%;padding:20px 0">
         <div style="border-bottom:1px solid #eee">
           <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Service Management Team</a>
         </div>
@@ -152,15 +156,67 @@ exports.login = async (req, res) => {
         });
         await otpModel.save();
         return res.status(200).json({
-          status:200,
+          status: 200,
           "success": true,
+
           "message": "Otp sent Sucessfully",
-          "data": { "token": token }
+          "data": { "token": token,isadmin:"true","email":userData.email,"id":userData.id}
+        })
+        }
+
+        // 
+        else{
+        let generateOtp = Math.floor(100000 + Math.random() * 900000);
+        const message = {
+          from: "dtest6654@gmail.com",
+          to: req.body.email,
+          subject: "OTP",
+          html: `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+        <div style="margin:50px auto;width:70%;padding:20px 0">
+        <div style="border-bottom:1px solid #eee">
+          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Service Management Team</a>
+        </div>
+        <p style="font-size:1.1em">Hi,</p>
+        <p>Thank you for choosing Our Website. Use the following OTP to complete your Log in procedures. OTP is valid for 5 minutes</p>
+        <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${generateOtp}</h2>
+        <p style="font-size:0.9em;">Regards,<br />Service Management Team</p>
+        <hr style="border:none;border-top:1px solid #eee" />
+        <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
+          <p>Service Management Team Inc</p>
+          <p>Ahemdabad</p>
+          <p>Gujrat,India</p>
+        </div>
+      </div>
+    </div>`,
+        };
+        transporter.sendMail(message, (error, info) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Email sent ...", info.response);
+          }
+        });
+        const otpModel = new OTP({
+          userId: userData._id,
+          otp: generateOtp,
+        });
+        const savedOtp = await OTP.findOneAndDelete({
+          userId: userData._id,
+        });
+        await otpModel.save();
+        return res.status(200).json({
+          status: 200,
+          "success": true,
+
+          "message": "Otp sent Sucessfully",
+          "data": { "token": token,isadmin:"false","email":userData.email}
         })
       }
+      }
+     
       else {
         res.status(211).json({
-          status:211,
+          status: 211,
           "success": false,
           "message": "password not match",
           "data": {}
@@ -182,23 +238,21 @@ exports.sendlink = async (req, res) => {
   }
   try {
     const user = await Userdb.findOne({ email: email })
-      const token = jwt.sign(
-        { _id: user._id },
-        'this is secret key',
-        { expiresIn: "1d" }
-      );
-      const setusertoken = await Userdb.findByIdAndUpdate({ _id: user._id }, { verifytoken: token }, { new: true })
-    if (setusertoken) 
-    {
-      const message = 
+    const token = jwt.sign(
+      { _id: user._id },
+      'this is secret key',
+      { expiresIn: "1d" }
+    );
+    const setusertoken = await Userdb.findByIdAndUpdate({ _id: user._id }, { verifytoken: token }, { new: true })
+    if (setusertoken) {
+      const message =
       {
         from: "dtest6654@gmail.com",
         to: req.body.email,
         subject: "Forget Password Link",
         html: `'<p>Click <a href="http://localhost:3000/forgetpassword/${user._id}/${setusertoken.verifytoken}'">click here</a> to reset your password</p>'`,
       };
-      transporter.sendMail(message, (error, info) => 
-      {
+      transporter.sendMail(message, (error, info) => {
         if (error) {
           console.log(error);
           res.status(401).json({ status: 401, message: "email not sent" })
@@ -209,78 +263,150 @@ exports.sendlink = async (req, res) => {
       });
     }
   }
-  catch(error){
-    res.status(401).json({status:401,message:"invalid user"})
+  catch (error) {
+    res.status(401).json({ status: 401, message: "invalid user" })
   }
-  
+
 }
 
 
-exports.resetpassword = async(req,res)=>{
-  const {id,token} = req.params;
-    const {password} = req.body;
-    console.log("🚀 ~ file: index.controller.js:220 ~ exports.resetpassword=async ~ password:", password)
-    try {
-        const updatedpassword = await Userdb.findByIdAndUpdate(
-         { _id:id,verifytoken:token},
-         { $set : { password : password}}
-        );
-        res.status(200).json({status:200,message:"password change successfully."})
-    } catch (error) {
-        res.status(401).json({status:401,error})
-    }
+exports.resetpassword = async (req, res) => {
+  const { id, token } = req.params;
+  const { password } = req.body;
+  console.log("🚀 ~ file: index.controller.js:220 ~ exports.resetpassword=async ~ password:", password)
+  try {
+    const updatedpassword = await Userdb.findByIdAndUpdate(
+      { _id: id, verifytoken: token },
+      { $set: { password: password } }
+    );
+    res.status(200).json({ status: 200, message: "password change successfully." })
+  } catch (error) {
+    res.status(401).json({ status: 401, error })
+  }
 }
 
-
-exports.addService = async(req,res)=>{
+// For adding a new Service 
+exports.addService = async (req, res) => {
   try {
     const service = new Servicedb({
-      userId:req.body.name,
-      service:req.body.service,
-      service_price:req.body.service_price,
-      modelId:req.body.Customer_name
+      userId: req.body.name,
+      service: req.body.service,
+      service_price: req.body.service_price,
+      email:req.body.email,
+      modelId: req.body.Customer_name
     })
     await service.save()
-        res.status(200).json({status:200,message:"Service add successfully"})
+    const message = {
+      from: "dtest6654@gmail.com",
+      to: req.body.email,
+      subject: "Service Add Succesfully",
+      html: `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+    <div style="margin:50px auto;width:70%;padding:20px 0">
+    <div style="border-bottom:1px solid #eee">
+      <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Service Management Team</a>
+    </div>
+    <p style="font-size:1.1em">Hi,</p>
+    <p>Hello User, your service added</p>
+    <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">Succesfull Add service</h2>
+    <p style="font-size:0.9em;">Regards,<br />Service Management Team</p>
+    <hr style="border:none;border-top:1px solid #eee" />
+    <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
+      <p>Service Management Team Inc</p>
+      <p>Ahemdabad</p>
+      <p>Gujrat,India</p>
+    </div>
+  </div>
+</div>`,
+    };
+    transporter.sendMail(message, (error, info) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent ...", info.response);
+      }
+    });
+    res.status(200).json({ status: 200, message: "Service add successfully" })
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// For add Service Getting a user list in DropDown
+exports.getService = async (req, res) => {
+  try {
+    const data = await Userdb.find()
+    res.status(200).send(data)
+
+  } catch (error) {
+
+  }
+}
+
+// For home page show all the data in dashboard
+exports.getServiceList = async (req, res) => {
+  try {
+    const data = await Servicedb.find().populate('userId')
+    console.log("🚀 ~ file: index.controller.js:349 ~ exports.getServiceList= ~ data:", data)
+    res.status(200).send(data)
+
+  } catch (error) {
+
+  }
+}
+
+
+// For get a in page data using this api
+exports.getedit = async (req, res) => {
+  const id = req.params.id;
+  console.log("🚀 ~ file: index.controller.js:275 ~ exports.getedit= ~ id:", id)
+  try {
+    const data = await Servicedb.findById(id).populate('userId')
+    console.log("🚀 ~ file: index.controller.js:277 ~ exports.getedit= ~ data:", data)
+    res.status(200).json({ 'data': data,"firstName":data.userId.firstName  })
+  } catch (error) {
+    res.status(401).json({ status: 401, error })
+  }
+
+}
+
+
+exports.postedit = async (req,res) => {
+  try {
+    const service = await Servicedb.findByIdAndUpdate(req.body.id)
+    
+      service.userId = req.body.name,
+      service.service = req.body.service,
+      service.service_price=  req.body.service_price,
+      service.modelId=  req.body.Customer_name
+  
+    await service.save()
+    res.status(200).json({ status: 200, message: "Service update successfully" })
   } catch (error) {
     console.log(error);
   }
 }
 
 
-exports.getService = async(req,res)=>
-{
+exports.getdelete = async (req, res) => {
   try {
-    const data = await Userdb.find()
+    const data = await Servicedb.findByIdAndDelete(req.query.id)
+    res.status(200).json({status:200,message:"succesfully deleted"})
+  } catch (error) {
+    res.status(401).json({ status: 401, error })
+  }
+
+}
+
+
+exports.getCustomerServiceList = async (req, res) => {
+  try {
+    const id = req.cookies.id
+    console.log("🚀 ~ file: index.controller.js:403 ~ exports.getCustomerServiceList= ~ id:", id)
+    const data = await Servicedb.findById(id)
+    console.log("🚀 ~ file: index.controller.js:373 ~ exports.getCustomerServiceList= ~ data:", data)
     res.status(200).send(data)
-  
-  }catch(error){
+
+  } catch (error) {
 
   }
 }
-
-exports.getServiceList = async(req,res)=>
-{
-  try {
-    const data = await Servicedb.find().populate('userId')
-    console.log("🚀 ~ file: index.controller.js:266 ~ data:", data)
-    res.status(200).send(data)
-  
-  }catch(error){
-
-  }
-}
-
-exports.getedit = async(req,res)=>{
-  const id = req.query.id;
-  console.log("🚀 ~ file: index.controller.js:265 ~ exports.getedit=async ~ id:", id)
-  try {
-    const data = await Servicedb.findById(id).populate('userId')
-    console.log("🚀 ~ file: index.controller.js:269 ~ exports.getedit=async ~ data:", data) 
-    res.status(200).json({'data':data})
-} catch (error) {
-    res.status(401).json({status:401,error})
-}
-
-}
-

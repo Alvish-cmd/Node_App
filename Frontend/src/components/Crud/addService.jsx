@@ -85,11 +85,13 @@ export default function SignInSide(props) {
   }, []);
 
   const handelsubmit = async(event) => {
+  //  const email = localStorage.getItem('email')
     event.preventDefault();
     const config = {
       name : customer,
       service : service,
-      service_price : price
+      service_price : price,
+      // email:email,
   
     }
     console.log("🚀 ~ file: addService.jsx:95 ~ handelsubmit ~ config:", config)
@@ -132,9 +134,9 @@ export default function SignInSide(props) {
           </Typography>
           <form className={classes.form} >
 
-            <div class="form-group">
-              <label for="name" class="text-light">Customer Name: </label>
-              <select id="Customer_name" onClick={(e) => { setCustomer(e.target.value) }} name="customer" class="form-control">
+            <div className="form-group">
+              <label for="name" className="text-light">Customer Name: </label>
+              <select id="Customer_name" onClick={(e) => { setCustomer(e.target.value) }} name="customer" className="form-control">
                 {data.map((user) => (
                   <>
                     <option value={user._id}>{user.firstName}</option>
@@ -142,9 +144,9 @@ export default function SignInSide(props) {
                 ))}
               </select>
             </div>
-            <div class="form-group">
-              <label for="name" class="text-light">Serivce: </label>
-              <select id="Customer_name" onChange={(e) => { setService(e.target.value) }} name="service" class="form-control">
+            <div className="form-group">
+              <label for="name" className="text-light">Serivce: </label>
+              <select id="Customer_name" onChange={(e) => { setService(e.target.value) }} name="service" className="form-control">
                 <option value="detail" selected>select the filed</option>
                 <option value="Website Devlopment">Website Devlopment</option>
                 <option value="App Devlopment">App Devlopment</option>

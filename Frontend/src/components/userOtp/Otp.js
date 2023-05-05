@@ -81,8 +81,6 @@ const Otp = (props) => {
                 otp: OTPS,
 
             }
-            console.log("🚀 ~ file: Otp.js:20 ~ handleSubmit ~ config:", config)
-
             if (OTPS.length <= 5) {
                 alert("somthing went wrong")
             }
@@ -98,7 +96,16 @@ const Otp = (props) => {
                     });
                 const Response = await response.json()
                 if (response.status === 200) {
-                    props.history.push("/home");
+                    const check = localStorage.getItem('admin')
+                    console.log("🚀 ~ file: Otp.js:100 ~ handleSubmit ~ check:", check)
+                    const email = localStorage.getItem('email')
+                    if (check === 'true') {
+
+                        props.history.push("/home");
+                    }
+                    else{
+                        props.history.push("/chome");
+                    }
                 }
                 if (response.status === 404) {
                     props.history.push('/otp')
@@ -161,16 +168,16 @@ const Otp = (props) => {
                         </Button>
                         <Box mt={5}>
                         </Box>
-                        {/* <Button
+                        <Button
                             type="submit"
                             fullWidth
                             variant="contained"
                             color="primary"
                             className={classes.login}
-                            onClick={handleLogin}
+                            onClick={() => authService.logOut(props)}
                         >
                             Back To Login
-                        </Button> */}
+                        </Button>
                     </div>
                 </Grid>
             </Grid>

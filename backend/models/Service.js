@@ -13,6 +13,9 @@ const Schema =  mongoose.Schema;
     },
     service_price:{
         type:Number,
+    },
+    email:{
+        type:String
     }
 })
 

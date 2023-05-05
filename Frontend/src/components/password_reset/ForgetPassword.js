@@ -77,7 +77,7 @@ const ForgetPassword = () =>
 
 
     } else if (password.length < 6) {
-
+        
     } else {
       
       const res = await fetch(`http://localhost:8000/forgetpassword/${id}/${token}`, {

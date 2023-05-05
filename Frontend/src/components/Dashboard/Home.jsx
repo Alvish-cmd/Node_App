@@ -123,33 +123,24 @@ export default function Home(props) {
         },
       });
     const Response = await response.json()
+    console.log("🚀 ~ file: Home.jsx:126 ~ fetchdata ~ Response:", Response)
     
     setData(Response)
   }
-  useEffect(() => {
-    fetchdata()
-  }, []);
+
 
   const getUserData = async(id) => {
   
   
-    const response = await fetch(`http://localhost:8000/getservice?id=${id}`,
-      {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          "Allow-Control-Cross-Origin": '*'
-
-        },
-      });
+    const response = await fetch(`http://localhost:8000/getdelete?id=${id}`)
     const Response = await response.json()
-    localStorage.setItem('user',JSON.stringify(Response))
     
-      props.history.push('/EditService')
+
     
   }
+  useEffect(() => {
+    fetchdata()
+  }, []);
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -331,13 +322,10 @@ export default function Home(props) {
               <td>{i.userId.firstName}</td>
               <td>{i.service}</td>
               <td>{i.service_price}</td>
-              <td><Button onClick={()=>{getUserData(i._id)}}>Edit</Button></td>
-              {/* <a href={"/updateservice/"+i._id} class="btn border-shadow update">
-                <span class="text-gradient">Edit</span>
-              </a> */}
-              <a href={"/update-service?id="+i._id} class="btn border-shadow update">
-                <span class="text-gradient">Edit</span>
-              </a>
+              <td><Link className='link' to={`/EditService/${i._id}`}>Edit</Link></td>
+              
+              
+              <td><Button onClick={()=>{getUserData(i._id)}}>delete</Button></td>
             </tr>
           )
         })}

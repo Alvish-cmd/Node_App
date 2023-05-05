@@ -9,7 +9,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import image from "../Images/image.jpg";
-import { useParams,useHistory } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import "./css/add-service.css"
 
 const useStyles = makeStyles((theme) => ({
@@ -56,28 +56,44 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function EditService(props) {
+export default function EditService(props) 
+{
   const history = useHistory()
   const classes = useStyles();
-  const { id, token } = useParams();
+  const { id } = useParams();
   const [customer, setCustomer] = useState('')
   const [service, setService] = useState('')
   const [price, setPrice] = useState('')
-  const [data, setData] = useState([])
-
-  const fetchdata = async () => {
-   // Get the data from local storage
-const data = JSON.parse(localStorage.getItem('data1'));
-console.log("🚀 ~ file: EditService.jsx:71 ~ fetchdata ~ data:", data).
-
-
+  const [data, setData] = useState('')
+  const [name,setName] = useState('')
+  const fetchData = async() => {
     
+    const response = await fetch(`http://localhost:8000/getservice/${id}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          "Allow-Control-Cross-Origin": '*'
+        },
+        
+      });
+      const Response = await response.json()
+      console.log("🚀 ~ file: EditService.jsx:82 ~ fetchData ~ Response:", Response)
+      if(Response.status = 200){
+        setData(Response.data )
+        setName(Response.firstName)
+      }
   }
+  
+
+
+  
   useEffect(() => {
-    fetchdata()
+   fetchData()
   }, []);
-  console.log(data);
- 
+
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
@@ -102,20 +118,14 @@ console.log("🚀 ~ file: EditService.jsx:71 ~ fetchdata ~ data:", data).
 
             <div className="form-group">
               <label for="name" className="text-light">Customer Name: </label>
-              <select id="Customer_name" onClick={(e) => { setCustomer(e.target.value) }} name="customer" className="form-control">
-                {data.map((user) => (
-                  <>
-                    <option >{user.userId.firstName}</option>
-                    <option >1</option>
-
-                  </>
-                ))}
+              <select id="Customer_name" onClick={(e) => { setCustomer(e.target.value) }} name="customer" className="form-control" disabled>
+              <option value={name} >{name}</option>
               </select>
             </div>
             <div class="form-group">
               <label for="name" class="text-light">Serivce: </label>
               <select id="Customer_name" onChange={(e) => { setService(e.target.value) }} name="service" class="form-control">
-                <option value="detail" selected>select the filed</option>
+                <option value={data.service} selected>{data.service}</option>
                 <option value="Website Devlopment">Website Devlopment</option>
                 <option value="App Devlopment">App Devlopment</option>
                 <option value="Game Devlopment">Game Devlopment</option>
@@ -127,7 +137,7 @@ console.log("🚀 ~ file: EditService.jsx:71 ~ fetchdata ~ data:", data).
               required
               fullWidth
               name="service_price"
-              value={price}
+              value={data.service_price}
               onChange={(e) => { setPrice(e.target.value) }}
               label="price"
               type="number"
@@ -140,8 +150,9 @@ console.log("🚀 ~ file: EditService.jsx:71 ~ fetchdata ~ data:", data).
               variant="contained"
               color="primary"
               className={classes.submit}
+              
             >
-              Add Service
+              Update Service
             </Button>
           </form>
         </div>

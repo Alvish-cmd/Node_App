@@ -67,7 +67,7 @@ export default function SignInSide(props) {
   const classes = useStyles();
 
   if (authService.isLoggedIn()) {
-    props.history.push("./otp");
+    props.history.push("/otp");
 
   }
 
@@ -97,17 +97,23 @@ export default function SignInSide(props) {
             body: JSON.stringify(config),
           });
           const Response = await response.json()
+          console.log("🚀 ~ file: Login.jsx:100 ~ handelLogin ~ Response:", Response)
         if (Response.success === true) {
           const token = localStorage.setItem('token',Response.data.token)
-          props.history.push("/otp");
+          const admin = localStorage.setItem('admin',Response.data.isadmin)
+          const email = localStorage.setItem('email',Response.data.email)
+          const id = localStorage.setItem('id',Response.data._id)
+  
+
+            props.history.push("/otp");
+          
         }
         if (Response.success === false) {
-          props.history.push("/login");
+          props.history.push("/");
         }
         if (response.status === 211) {
           console.log(response);
         }
-        
       }
     }
     catch (error) { console.log(error) };

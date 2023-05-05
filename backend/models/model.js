@@ -30,7 +30,8 @@ const schema = new mongoose.Schema({
     },
     verifytoken:{
         type:String,
-    }
+    },
+    
 })
 
 

@@ -69,10 +69,25 @@ router.post("/forgetpassword/:id/:token", indexController.resetpassword)
 
 // Service Routes
 router.get("/getServiceList", indexController.getServiceList)
+
+// For add Service Getting a user list in DropDown
 router.get("/getuser", indexController.getService)
 
+// For add a Serice 
 router.post("/addService",indexController.addService);
 
-router.get("/getservice",indexController.getedit);
+// For edit service use this data 
+router.get("/getservice/:id",indexController.getedit);
+
+// For update a service data 
+router.post("/postservice",indexController.postedit);
+
+// For deleate a service data
+router.get("/getdelete",indexController.getdelete);
+
+
+
+// 
+router.get("/getCustomerServiceList", indexController.getCustomerServiceList)
 
 module.exports = router;
